@@ -7,10 +7,10 @@ import com.att.tdp.bisbis10.model.Restaurant;
 import java.util.List;
 
 public interface IRestaurantService {
-    List<Restaurant> getAllRestaurants();
-    List<Restaurant> getRestaurantsByCuisine(String cuisine);
-    Restaurant getRestaurantById(Long id) throws RestaurantNotFoundException;
-    Restaurant addRestaurant(RestaurantDTO restaurantDTO);
-    Restaurant updateRestaurant(Long id, RestaurantDTO restaurantDTO) throws RestaurantNotFoundException;
+    List<RestaurantDTO> getAllRestaurants();
+    List<RestaurantDTO> getRestaurantsByCuisine(String cuisine);
+    RestaurantDTO getRestaurantById(Long id) throws RestaurantNotFoundException;
+    RestaurantDTO addRestaurant(RestaurantDTO restaurantDTO);
+    RestaurantDTO updateRestaurant(Long id, RestaurantDTO restaurantDTO) throws RestaurantNotFoundException;
     void deleteRestaurant(Long id) throws RestaurantNotFoundException;
 }

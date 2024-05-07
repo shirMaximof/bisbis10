@@ -7,6 +7,8 @@ import com.att.tdp.bisbis10.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantService implements IRestaurantService {
@@ -18,33 +20,44 @@ public class RestaurantService implements IRestaurantService {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+    public List<RestaurantDTO> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        return restaurants.stream()
+                .map((res) -> new RestaurantDTO(res.getId(), res.getName(), res.isKosher(), res.getAverageRating(), res.getCuisines())) // Assuming RestaurantDTO constructor takes a Restaurant as parameter
+                .collect(Collectors.toList());
     }
 
-    public List<Restaurant> getRestaurantsByCuisine(String cuisine) {
-        return restaurantRepository.findByCuisinesContaining(cuisine);
+    public List<RestaurantDTO> getRestaurantsByCuisine(String cuisine) {
+        List<Restaurant> restaurants = restaurantRepository.findByCuisinesContaining(cuisine);
+
+        return restaurants.stream()
+                .map((res) -> new RestaurantDTO(res.getId(), res.getName(), res.isKosher(), res.getAverageRating(), res.getCuisines())) // Assuming RestaurantDTO constructor takes a Restaurant as parameter
+                .collect(Collectors.toList());
     }
 
-    public Restaurant getRestaurantById(Long id) throws RestaurantNotFoundException {
-        return restaurantRepository.findById(id)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + id));
+    public RestaurantDTO getRestaurantById(Long id) throws RestaurantNotFoundException {
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
+        Restaurant restaurant = optionalRestaurant.orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + id));
+
+        return new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.isKosher(), restaurant.getAverageRating(), restaurant.getCuisines());
     }
 
-    public Restaurant addRestaurant(RestaurantDTO restaurantDTO) {
+    public RestaurantDTO addRestaurant(RestaurantDTO restaurantDTO) {
         Restaurant restaurant = new Restaurant(restaurantDTO);
-        return restaurantRepository.save(restaurant);
+        restaurantRepository.save(restaurant);
+        return new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.isKosher(), restaurant.getAverageRating(), restaurant.getCuisines());
     }
 
-    public Restaurant updateRestaurant(Long id, RestaurantDTO restaurantDTO) throws RestaurantNotFoundException {
-        Restaurant existingRestaurant = restaurantRepository.findById(id)
+    public RestaurantDTO updateRestaurant(Long id, RestaurantDTO restaurantDTO) throws RestaurantNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + id));
 
-        existingRestaurant.setName(restaurantDTO.name());
-        existingRestaurant.setCuisines(restaurantDTO.cuisines());
-        existingRestaurant.setKosher(restaurantDTO.isKosher());
+        restaurant.setName(restaurantDTO.name());
+        restaurant.setCuisines(restaurantDTO.cuisines());
+        restaurant.setKosher(restaurantDTO.isKosher());
 
-        return restaurantRepository.save(existingRestaurant);
+        restaurantRepository.save(restaurant);
+        return new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.isKosher(), restaurant.getAverageRating(), restaurant.getCuisines());
     }
 
     public void deleteRestaurant(Long id) throws RestaurantNotFoundException {
