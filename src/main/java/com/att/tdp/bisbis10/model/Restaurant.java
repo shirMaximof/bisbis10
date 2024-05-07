@@ -11,6 +11,7 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private float averageRating;
     private boolean isKosher;
 
     @ElementCollection
@@ -22,6 +23,7 @@ public class Restaurant {
         this.name = restaurantDTO.name();
         this.isKosher = restaurantDTO.isKosher();
         this.cuisines = restaurantDTO.cuisines();
+        this.averageRating = -1;
     }
 
     public String getName() {
@@ -54,5 +56,12 @@ public class Restaurant {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    public float getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
     }
 }
