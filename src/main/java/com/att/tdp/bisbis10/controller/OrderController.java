@@ -1,9 +1,10 @@
 package com.att.tdp.bisbis10.controller;
 
-import com.att.tdp.bisbis10.DTO.OrderDTO;
-import com.att.tdp.bisbis10.DTO.OrderResponseDTO;
+import com.att.tdp.bisbis10.DTO.Order.CreateOrderDTO;
+import com.att.tdp.bisbis10.DTO.Order.OrderResponseDTO;
 import com.att.tdp.bisbis10.exceptions.DishNotFoundException;
 import com.att.tdp.bisbis10.service.Order.OrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/order")
+@Tag(name = "Orders-APIs")
 public class OrderController {
 
     private final OrderService orderService;
@@ -25,9 +27,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<OrderResponseDTO> placeOrder(@RequestBody CreateOrderDTO createOrderDTO) {
         try {
-            OrderResponseDTO orderReponseDTO = orderService.placeOrder(orderDTO);
+            OrderResponseDTO orderReponseDTO = orderService.placeOrder(createOrderDTO);
             return ResponseEntity.ok(orderReponseDTO);
         } catch (RestaurantNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -1,6 +1,6 @@
 package com.att.tdp.bisbis10.service.Rating;
 
-import com.att.tdp.bisbis10.DTO.RatingDTO;
+import com.att.tdp.bisbis10.DTO.Rating.CreateRatingDTO;
 import com.att.tdp.bisbis10.exceptions.InvalidRatingException;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Rating;
@@ -22,11 +22,11 @@ public class RatingService implements IRatingService{
         this.restaurantRepository = restaurantRepository;
     }
 
-    public void addRating(RatingDTO ratingDTO) throws RestaurantNotFoundException, InvalidRatingException {
-        Restaurant restaurant = restaurantRepository.findById(ratingDTO.restaurantId())
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + ratingDTO.restaurantId()));
+    public void addRating(CreateRatingDTO createRatingDTO) throws RestaurantNotFoundException, InvalidRatingException {
+        Restaurant restaurant = restaurantRepository.findById(createRatingDTO.restaurantId())
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + createRatingDTO.restaurantId()));
 
-        Rating rating = new Rating(ratingDTO);
+        Rating rating = new Rating(createRatingDTO);
 
         if (rating.getRating() < 0 || rating.getRating() > 5) {
             throw new InvalidRatingException("Invalid rating value");
@@ -35,7 +35,7 @@ public class RatingService implements IRatingService{
         rating.setRestaurant(restaurant);
         ratingRepository.save(rating);
 
-        Float avgRating = ratingRepository.findAverageRatingByRestaurantId(ratingDTO.restaurantId());
+        Float avgRating = ratingRepository.findAverageRatingByRestaurantId(createRatingDTO.restaurantId());
         restaurant.setAverageRating(avgRating);
 
         restaurantRepository.save(restaurant);

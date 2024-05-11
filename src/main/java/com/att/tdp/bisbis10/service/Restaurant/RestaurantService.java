@@ -1,8 +1,9 @@
 package com.att.tdp.bisbis10.service.Restaurant;
 
-import com.att.tdp.bisbis10.DTO.DishDTO;
-import com.att.tdp.bisbis10.DTO.RestaurantDTO;
-import com.att.tdp.bisbis10.DTO.RestaurantDTOWithDishes;
+import com.att.tdp.bisbis10.DTO.Dish.DishDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.CreateRestaurantDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.RestaurantDTOWihoutDishes;
+import com.att.tdp.bisbis10.DTO.Restaurant.RestaurantDTOWithDishes;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Restaurant;
 import com.att.tdp.bisbis10.repository.RestaurantRepository;
@@ -22,17 +23,17 @@ public class RestaurantService implements IRestaurantService {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public List<RestaurantDTO> getAllRestaurants() {
+    public List<RestaurantDTOWihoutDishes> getAllRestaurants() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
         return restaurants.stream()
-                .map((res) -> new RestaurantDTO(res.getId(), res.getName(), res.getAverageRating(), res.isKosher(), res.getCuisines()))
+                .map((res) -> new RestaurantDTOWihoutDishes(res.getId(), res.getName(), res.getAverageRating(), res.isKosher(), res.getCuisines()))
                 .collect(Collectors.toList());
     }
 
-    public List<RestaurantDTO> getRestaurantsByCuisine(String cuisine) {
+    public List<RestaurantDTOWihoutDishes> getRestaurantsByCuisine(String cuisine) {
         List<Restaurant> restaurants = restaurantRepository.findByCuisinesContaining(cuisine);
         return restaurants.stream()
-                .map((res) -> new RestaurantDTO(res.getId(), res.getName(), res.getAverageRating(), res.isKosher(), res.getCuisines()))
+                .map((res) -> new RestaurantDTOWihoutDishes(res.getId(), res.getName(), res.getAverageRating(), res.isKosher(), res.getCuisines()))
                 .collect(Collectors.toList());
     }
 
@@ -47,18 +48,18 @@ public class RestaurantService implements IRestaurantService {
         return new RestaurantDTOWithDishes(restaurant.getId(), restaurant.getName(), restaurant.getAverageRating(), restaurant.isKosher(), restaurant.getCuisines(), dishes);
     }
 
-    public void addRestaurant(RestaurantDTO restaurantDTO) {
-        Restaurant restaurant = new Restaurant(restaurantDTO);
+    public void addRestaurant(CreateRestaurantDTO createRestaurantDTO) {
+        Restaurant restaurant = new Restaurant(createRestaurantDTO);
         restaurantRepository.save(restaurant);
     }
 
-    public void updateRestaurant(Long id, RestaurantDTO restaurantDTO) throws RestaurantNotFoundException {
+    public void updateRestaurant(Long id, CreateRestaurantDTO createRestaurantDTO) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + id));
 
-        restaurant.setName(restaurantDTO.name());
-        restaurant.setCuisines(restaurantDTO.cuisines());
-        restaurant.setKosher(restaurantDTO.isKosher());
+        restaurant.setName(createRestaurantDTO.name());
+        restaurant.setCuisines(createRestaurantDTO.cuisines());
+        restaurant.setKosher(createRestaurantDTO.isKosher());
 
         restaurantRepository.save(restaurant);
     }

@@ -1,6 +1,7 @@
 package com.att.tdp.bisbis10.model;
 
-import com.att.tdp.bisbis10.DTO.DishDTO;
+import com.att.tdp.bisbis10.DTO.Dish.CreateDishDTO;
+import com.att.tdp.bisbis10.DTO.Dish.DishDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,10 +19,10 @@ public class Dish {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
-    public Dish(DishDTO dishDTO) {
-        this.name = dishDTO.name();
-        this.description = dishDTO.description();
-        this.price = dishDTO.price();
+    public Dish(CreateDishDTO createDishDTO) {
+        this.name = createDishDTO.name();
+        this.description = createDishDTO.description();
+        this.price = createDishDTO.price();
     }
 
     public Dish() {

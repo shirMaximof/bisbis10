@@ -1,6 +1,7 @@
 package com.att.tdp.bisbis10.model;
 
-import com.att.tdp.bisbis10.DTO.RestaurantDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.CreateRestaurantDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.RestaurantDTOWihoutDishes;
 import jakarta.persistence.*;
 
 import java.util.LinkedList;
@@ -25,11 +26,10 @@ public class Restaurant {
     private List<Dish> dishes = new LinkedList<>();
 
     public Restaurant() {}
-    public Restaurant(RestaurantDTO restaurantDTO) {
-        this.id = restaurantDTO.id();
-        this.name = restaurantDTO.name();
-        this.isKosher = restaurantDTO.isKosher();
-        this.cuisines = restaurantDTO.cuisines();
+    public Restaurant(CreateRestaurantDTO createRestaurantDTO) {
+        this.name = createRestaurantDTO.name();
+        this.isKosher = createRestaurantDTO.isKosher();
+        this.cuisines = createRestaurantDTO.cuisines();
         this.averageRating = -1;
     }
     public Order placeOrder(List<OrderItem> orderItems) {

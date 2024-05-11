@@ -1,6 +1,7 @@
 package com.att.tdp.bisbis10.service.Dish;
 
-import com.att.tdp.bisbis10.DTO.DishDTO;
+import com.att.tdp.bisbis10.DTO.Dish.CreateDishDTO;
+import com.att.tdp.bisbis10.DTO.Dish.DishDTO;
 import com.att.tdp.bisbis10.exceptions.DishNotFoundException;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Dish;
@@ -23,27 +24,27 @@ public class DishService implements IDishService {
     private DishRepository dishRepository;
 
     @Override
-    public void addDish(Long restaurantId, DishDTO dishDTO) throws RestaurantNotFoundException {
+    public void addDish(Long restaurantId, CreateDishDTO createDishDTO) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + restaurantId));
 
-        Dish dish = new Dish(dishDTO);
+        Dish dish = new Dish(createDishDTO);
         restaurant.addDish(dish);
 
         dishRepository.save(dish);
     }
 
     @Override
-    public void updateDish(Long restaurantId, Long dishId, DishDTO dishDTO) throws DishNotFoundException, RestaurantNotFoundException {
+    public void updateDish(Long restaurantId, Long dishId, CreateDishDTO createDishDTO) throws DishNotFoundException, RestaurantNotFoundException {
         restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not fount with id: "+restaurantId));
 
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new DishNotFoundException("Dish not found with id: " + dishId));
 
-        dish.setName(dishDTO.name());
-        dish.setDescription(dishDTO.description());
-        dish.setPrice(dishDTO.price());
+        dish.setName(createDishDTO.name());
+        dish.setDescription(createDishDTO.description());
+        dish.setPrice(createDishDTO.price());
 
         dishRepository.save(dish);
     }

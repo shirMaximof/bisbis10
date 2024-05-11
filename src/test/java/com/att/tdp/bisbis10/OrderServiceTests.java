@@ -1,7 +1,7 @@
 package com.att.tdp.bisbis10;
 
-import com.att.tdp.bisbis10.DTO.OrderDTO;
-import com.att.tdp.bisbis10.DTO.OrderItemDTO;
+import com.att.tdp.bisbis10.DTO.Order.CreateOrderDTO;
+import com.att.tdp.bisbis10.DTO.Order.OrderItemDTO;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Dish;
 import com.att.tdp.bisbis10.model.Order;
@@ -43,22 +43,20 @@ class OrderServiceTests {
 
     @Test
     void testPlaceOrder() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
         Long dishId1 = 2L;
         Long dishId2 = 3L;
-        OrderDTO orderDTO = new OrderDTO(uuid,1L, Arrays.asList(new OrderItemDTO(dishId1, 2), new OrderItemDTO(dishId2, 1)));
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(1L, Arrays.asList(new OrderItemDTO(dishId1, 2), new OrderItemDTO(dishId2, 1)));
         Restaurant restaurant = new Restaurant();
         Dish dish = new Dish();
 
-        when(restaurantRepository.findById(orderDTO.restaurantId())).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.findById(createOrderDTO.restaurantId())).thenReturn(Optional.of(restaurant));
         when(dishRepository.findById(dishId1)).thenReturn(Optional.of(dish));
         when(dishRepository.findById(dishId2)).thenReturn(Optional.of(dish));
 
         // Act + assert
         try
         {
-             orderService.placeOrder(orderDTO);
+             orderService.placeOrder(createOrderDTO);
             verify(orderRepository, times(1)).save(any(Order.class));
         }
         catch (Exception e)
@@ -70,12 +68,11 @@ class OrderServiceTests {
     @Test
     void testPlaceOrder_RestaurantNotFound() {
         // Arrange
-        UUID uuid = UUID.randomUUID();
-        OrderDTO orderDTO = new OrderDTO(uuid, 1L, Arrays.asList(new OrderItemDTO(1L, 2), new OrderItemDTO(2L, 1)));
-        when(restaurantRepository.findById(orderDTO.restaurantId())).thenReturn(Optional.empty());
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(1L, Arrays.asList(new OrderItemDTO(1L, 2), new OrderItemDTO(2L, 1)));
+        when(restaurantRepository.findById(createOrderDTO.restaurantId())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RestaurantNotFoundException.class, () -> orderService.placeOrder(orderDTO));
+        assertThrows(RestaurantNotFoundException.class, () -> orderService.placeOrder(createOrderDTO));
         verifyNoInteractions(orderRepository);
     }
 }

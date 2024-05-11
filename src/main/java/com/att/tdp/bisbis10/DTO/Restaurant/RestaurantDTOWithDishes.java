@@ -1,4 +1,6 @@
-package com.att.tdp.bisbis10.DTO;
+package com.att.tdp.bisbis10.DTO.Restaurant;
+
+import com.att.tdp.bisbis10.DTO.Dish.DishDTO;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.att.tdp.bisbis10.model;
 
-import com.att.tdp.bisbis10.DTO.OrderItemDTO;
+import com.att.tdp.bisbis10.DTO.Order.OrderItemDTO;
 import jakarta.persistence.*;
 
 
