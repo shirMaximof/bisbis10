@@ -1,6 +1,6 @@
 package com.att.tdp.bisbis10.model;
 
-import com.att.tdp.bisbis10.DTO.RatingDTO;
+import com.att.tdp.bisbis10.DTO.Rating.CreateRatingDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,9 +16,8 @@ public class Rating {
 
     public Rating() {
     }
-    public Rating(RatingDTO ratingDTO) {
-        this.ratingId = ratingDTO.ratingId();
-        this.rating = ratingDTO.rating();
+    public Rating(CreateRatingDTO createRatingDTO) {
+        this.rating = createRatingDTO.rating();
     }
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;

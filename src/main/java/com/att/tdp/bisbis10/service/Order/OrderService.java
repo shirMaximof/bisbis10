@@ -1,8 +1,8 @@
 package com.att.tdp.bisbis10.service.Order;
 
-import com.att.tdp.bisbis10.DTO.OrderDTO;
-import com.att.tdp.bisbis10.DTO.OrderItemDTO;
-import com.att.tdp.bisbis10.DTO.OrderResponseDTO;
+import com.att.tdp.bisbis10.DTO.Order.CreateOrderDTO;
+import com.att.tdp.bisbis10.DTO.Order.OrderItemDTO;
+import com.att.tdp.bisbis10.DTO.Order.OrderResponseDTO;
 import com.att.tdp.bisbis10.exceptions.DishNotFoundException;
 import com.att.tdp.bisbis10.model.Order;
 import com.att.tdp.bisbis10.model.OrderItem;
@@ -32,13 +32,13 @@ public class OrderService implements IOrderService{
         this.dishRepository = dishRepository;
     }
 
-    public OrderResponseDTO placeOrder(OrderDTO orderDTO) throws RestaurantNotFoundException, DishNotFoundException {
-        Restaurant restaurant = restaurantRepository.findById(orderDTO.restaurantId())
+    public OrderResponseDTO placeOrder(CreateOrderDTO createOrderDTO) throws RestaurantNotFoundException, DishNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(createOrderDTO.restaurantId())
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
 
         List<OrderItem> orderItemList = new LinkedList<>();
 
-        for (OrderItemDTO orderItemDTO : orderDTO.orderItems()) {
+        for (OrderItemDTO orderItemDTO : createOrderDTO.orderItems()) {
             dishRepository.findById(orderItemDTO.dishId())
                     .orElseThrow(() -> new DishNotFoundException("Dish not found"));
             orderItemList.add(new OrderItem(orderItemDTO));

@@ -1,7 +1,7 @@
 package com.att.tdp.bisbis10;
 
-import com.att.tdp.bisbis10.DTO.RatingDTO;
-import com.att.tdp.bisbis10.DTO.RestaurantDTO;
+import com.att.tdp.bisbis10.DTO.Rating.CreateRatingDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.CreateRestaurantDTO;
 import com.att.tdp.bisbis10.exceptions.InvalidRatingException;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Rating;
@@ -39,7 +39,7 @@ class RatingServiceTests {
     @Test
     void testAddRating_WithValidRating() throws RestaurantNotFoundException, InvalidRatingException {
         // Arrange
-        RatingDTO ratingDTO = new RatingDTO(1L, 1,4.5f);
+        CreateRatingDTO ratingDTO = new CreateRatingDTO(1,4.5f);
         Restaurant restaurant = new Restaurant();
         when(restaurantRepository.findById(ratingDTO.restaurantId())).thenReturn(Optional.of(restaurant));
 
@@ -54,23 +54,23 @@ class RatingServiceTests {
     @Test
     void testAddRating_WithInvalidRating() {
         // Arrange
-        RatingDTO ratingDTO = new RatingDTO(1L, 2L,5.5f);
-        Restaurant restaurant = new Restaurant(new RestaurantDTO(2L,"Restaurant1", 4.5f ,true, Arrays.asList("Asian")));
+        CreateRatingDTO createRatingDTO = new CreateRatingDTO(2L,5.5f);
+        Restaurant restaurant = new Restaurant(new CreateRestaurantDTO("Restaurant1" ,true, Arrays.asList("Asian")));
 
         // Act & Assert
-        when(restaurantRepository.findById(ratingDTO.restaurantId())).thenReturn(Optional.of(restaurant));
-        assertThrows(InvalidRatingException.class, () -> ratingService.addRating(ratingDTO));
+        when(restaurantRepository.findById(createRatingDTO.restaurantId())).thenReturn(Optional.of(restaurant));
+        assertThrows(InvalidRatingException.class, () -> ratingService.addRating(createRatingDTO));
         verifyNoInteractions(ratingRepository);
     }
 
     @Test
     void testAddRating_RestaurantNotFound() {
         // Arrange
-        RatingDTO ratingDTO = new RatingDTO(1L, 100,4.5f);
-        when(restaurantRepository.findById(ratingDTO.restaurantId())).thenReturn(Optional.empty());
+        CreateRatingDTO createRatingDTO = new CreateRatingDTO(100,4.5f);
+        when(restaurantRepository.findById(createRatingDTO.restaurantId())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RestaurantNotFoundException.class, () -> ratingService.addRating(ratingDTO));
+        assertThrows(RestaurantNotFoundException.class, () -> ratingService.addRating(createRatingDTO));
         verifyNoInteractions(ratingRepository);
     }
 }

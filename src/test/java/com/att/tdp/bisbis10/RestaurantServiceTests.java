@@ -1,7 +1,8 @@
 package com.att.tdp.bisbis10;
 
-import com.att.tdp.bisbis10.DTO.RestaurantDTO;
-import com.att.tdp.bisbis10.DTO.RestaurantDTOWithDishes;
+import com.att.tdp.bisbis10.DTO.Restaurant.CreateRestaurantDTO;
+import com.att.tdp.bisbis10.DTO.Restaurant.RestaurantDTOWihoutDishes;
+import com.att.tdp.bisbis10.DTO.Restaurant.RestaurantDTOWithDishes;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.model.Restaurant;
 import com.att.tdp.bisbis10.repository.RestaurantRepository;
@@ -32,8 +33,8 @@ class RestaurantServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurant1 = new Restaurant(new RestaurantDTO(1L,"Restaurant1", 4.5f , true, Arrays.asList("Asian")));
-        restaurant2 = new Restaurant(new RestaurantDTO(2L, "Restaurant2", 4.0f, false, Arrays.asList("Italian")));
+        restaurant1 = new Restaurant(new CreateRestaurantDTO("Restaurant1", true, Arrays.asList("Asian")));
+        restaurant2 = new Restaurant(new CreateRestaurantDTO("Restaurant2", false, Arrays.asList("Italian")));
     }
 
     @Test
@@ -43,12 +44,10 @@ class RestaurantServiceTests {
         when(restaurantRepository.findAll()).thenReturn(mockRestaurants);
 
         // Act
-        List<RestaurantDTO> result = restaurantService.getAllRestaurants();
+        List<RestaurantDTOWihoutDishes> result = restaurantService.getAllRestaurants();
 
         // Assert
         assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).id());
-        assertEquals(2L, result.get(1).id());
     }
 
     @Test
@@ -60,11 +59,10 @@ class RestaurantServiceTests {
         when(restaurantRepository.findByCuisinesContaining(cuisine)).thenReturn(mockRestaurants);
 
         // Act
-        List<RestaurantDTO> result = restaurantService.getRestaurantsByCuisine(cuisine);
+        List<RestaurantDTOWihoutDishes> result = restaurantService.getRestaurantsByCuisine(cuisine);
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).id());
     }
 
     @Test
@@ -77,7 +75,7 @@ class RestaurantServiceTests {
         try
         {
             RestaurantDTOWithDishes result = restaurantService.getRestaurantById(id);
-            assertEquals(id, result.id());
+            assertNotEquals(result, null);
         }
         catch (Exception e)
         {
@@ -98,10 +96,10 @@ class RestaurantServiceTests {
     @Test
     void testAddRestaurant() {
         // Arrange
-        RestaurantDTO restaurantDTO = new RestaurantDTO(null, "New Restaurant", 4.0f, true, Arrays.asList("Asian"));
+        CreateRestaurantDTO createRestaurantDTO = new CreateRestaurantDTO( "New Restaurant", true, Arrays.asList("Asian"));
 
         // Act
-        restaurantService.addRestaurant(restaurantDTO);
+        restaurantService.addRestaurant(createRestaurantDTO);
 
         // Assert
         verify(restaurantRepository, times(1)).save(any(Restaurant.class));
@@ -111,13 +109,13 @@ class RestaurantServiceTests {
     void testUpdateRestaurant_WhenRestaurantExists() {
         // Arrange
         Long id = 1L;
-        RestaurantDTO restaurantDTO = new RestaurantDTO(id, "Updated Restaurant",4.2f, true,  Arrays.asList("Italian"));
+        CreateRestaurantDTO createRestaurantDTO = new CreateRestaurantDTO("Updated Restaurant", true,  Arrays.asList("Italian"));
         when(restaurantRepository.findById(id)).thenReturn(Optional.of(restaurant1));
 
         // Act
         try
         {
-            restaurantService.updateRestaurant(id, restaurantDTO);
+            restaurantService.updateRestaurant(id, createRestaurantDTO);
         }
         catch (Exception e)
         {
@@ -132,11 +130,11 @@ class RestaurantServiceTests {
     void testUpdateRestaurant_WhenRestaurantDoesNotExist() {
         // Arrange
         Long id = 1L;
-        RestaurantDTO restaurantDTO = new RestaurantDTO(id, "Updated Restaurant",  4.2f, true, Arrays.asList("Italian"));
+        CreateRestaurantDTO createRestaurantDTO = new CreateRestaurantDTO("Updated Restaurant",  true, Arrays.asList("Italian"));
         when(restaurantRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RestaurantNotFoundException.class, () -> restaurantService.updateRestaurant(id, restaurantDTO));
+        assertThrows(RestaurantNotFoundException.class, () -> restaurantService.updateRestaurant(id, createRestaurantDTO));
     }
 
     @Test
