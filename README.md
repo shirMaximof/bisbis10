@@ -1,4 +1,11 @@
 # Restaurant Management System
+## Access Swagger Documentation:
+After the server has started, open a web browser and go to the following URL:
+
+http://localhost:8080/swagger-ui/index.html 
+
+This URL will open the Swagger UI interface, allowing you to explore the API documentation.
+![image](https://github.com/shirMaximof/bisbis10/assets/80451184/2db64f0c-42ca-40df-a53d-ee50214745df)
 
 ## Overview
 The bisbis10 restaurant management system is a backend service designed to handle various operations related to restaurants, their dishes, and ratings. The system aims to provide a comprehensive platform for managing restaurant data, including details about the restaurants, their cuisines, dishes, and customer ratings.
