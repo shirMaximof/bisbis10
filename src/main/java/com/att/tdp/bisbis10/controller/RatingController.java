@@ -20,13 +20,13 @@ public class RatingController {
     public ResponseEntity<String> addRestaurantRating(@RequestBody RatingDTO ratingDTO) {
         try {
             ratingService.addRating(ratingDTO);
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok().build();
         } catch (RestaurantNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (InvalidRatingException e) {
             return ResponseEntity.badRequest().body("Invalid rating value");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

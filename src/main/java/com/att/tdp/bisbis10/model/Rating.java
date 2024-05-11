@@ -9,31 +9,26 @@ public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ratingId;
-    private long restaurantId;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
     private float rating;
 
     public Rating() {
     }
     public Rating(RatingDTO ratingDTO) {
         this.ratingId = ratingDTO.ratingId();
-        this.restaurantId = ratingDTO.restaurantId();
         this.rating = ratingDTO.rating();
     }
-
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
     public long getRatingId() {
         return ratingId;
     }
 
     public void setRatingId(long ratingId) {
         this.ratingId = ratingId;
-    }
-
-    public long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(long restaurantId) {
-        this.restaurantId = restaurantId;
     }
 
     public float getRating() {

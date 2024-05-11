@@ -1,6 +1,8 @@
 package com.att.tdp.bisbis10.controller;
 
 import com.att.tdp.bisbis10.DTO.OrderDTO;
+import com.att.tdp.bisbis10.DTO.OrderResponseDTO;
+import com.att.tdp.bisbis10.exceptions.DishNotFoundException;
 import com.att.tdp.bisbis10.service.Order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +25,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<String> placeOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<OrderResponseDTO> placeOrder(@RequestBody OrderDTO orderDTO) {
         try {
-            String orderId = orderService.placeOrder(orderDTO);
-            return ResponseEntity.ok(orderId);
+            OrderResponseDTO orderReponseDTO = orderService.placeOrder(orderDTO);
+            return ResponseEntity.ok(orderReponseDTO);
         } catch (RestaurantNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (DishNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
