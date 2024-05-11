@@ -7,13 +7,14 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long dishId;
     private int amount;
+    @ManyToOne
+    @JoinColumn(name="order_id")
+    private Order order;
     public OrderItem(OrderItemDTO orderItemDTO) {
         this.dishId = orderItemDTO.dishId();
         this.amount = orderItemDTO.amount();
@@ -45,5 +46,9 @@ public class OrderItem {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

@@ -1,6 +1,7 @@
 package com.att.tdp.bisbis10.controller;
 
 import com.att.tdp.bisbis10.DTO.RestaurantDTO;
+import com.att.tdp.bisbis10.DTO.RestaurantDTOWithDishes;
 import com.att.tdp.bisbis10.exceptions.RestaurantNotFoundException;
 import com.att.tdp.bisbis10.service.Restaurant.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class RestaurantController {
             List<RestaurantDTO> restaurants = restaurantService.getAllRestaurants();
             return ResponseEntity.ok(restaurants);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -32,41 +33,41 @@ public class RestaurantController {
             List<RestaurantDTO> restaurants = restaurantService.getRestaurantsByCuisine(cuisine);
             return ResponseEntity.ok(restaurants);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestaurantDTO> getRestaurantById(@PathVariable Long id) {
+    public ResponseEntity<RestaurantDTOWithDishes> getRestaurantById(@PathVariable Long id) {
         try {
-            RestaurantDTO restaurant = restaurantService.getRestaurantById(id);
+            RestaurantDTOWithDishes restaurant = restaurantService.getRestaurantById(id);
             return ResponseEntity.ok(restaurant);
         } catch (RestaurantNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantDTO> addRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<Void> addRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         try {
-            RestaurantDTO createdRestaurant = restaurantService.addRestaurant(restaurantDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdRestaurant);
+            restaurantService.addRestaurant(restaurantDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RestaurantDTO> updateRestaurant(@PathVariable Long id, @RequestBody RestaurantDTO restaurantDTO) {
+    public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody RestaurantDTO restaurantDTO) {
         try {
-            RestaurantDTO updatedRestaurant = restaurantService.updateRestaurant(id, restaurantDTO);
-            return ResponseEntity.ok(updatedRestaurant);
+            restaurantService.updateRestaurant(id, restaurantDTO);
+            return ResponseEntity.ok().build();
         } catch (RestaurantNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -76,7 +77,7 @@ public class RestaurantController {
             restaurantService.deleteRestaurant(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

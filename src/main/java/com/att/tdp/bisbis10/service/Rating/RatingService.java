@@ -10,8 +10,6 @@ import com.att.tdp.bisbis10.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class RatingService implements IRatingService{
 
@@ -25,22 +23,21 @@ public class RatingService implements IRatingService{
     }
 
     public void addRating(RatingDTO ratingDTO) throws RestaurantNotFoundException, InvalidRatingException {
-        Rating rating = new Rating(ratingDTO);
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(rating.getRestaurantId());
-        if (restaurantOptional.isEmpty()) {
-            throw new RestaurantNotFoundException("Restaurant not found");
-        }
+        Restaurant restaurant = restaurantRepository.findById(ratingDTO.restaurantId())
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id: " + ratingDTO.restaurantId()));
 
-        Restaurant restaurant = restaurantOptional.get();
+        Rating rating = new Rating(ratingDTO);
 
         if (rating.getRating() < 0 || rating.getRating() > 5) {
             throw new InvalidRatingException("Invalid rating value");
         }
 
+        rating.setRestaurant(restaurant);
         ratingRepository.save(rating);
 
-        Float avgRating = ratingRepository.findAverageRatingByRestaurantId(rating.getRestaurantId());
+        Float avgRating = ratingRepository.findAverageRatingByRestaurantId(ratingDTO.restaurantId());
         restaurant.setAverageRating(avgRating);
+
         restaurantRepository.save(restaurant);
     }
 

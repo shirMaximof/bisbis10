@@ -3,6 +3,7 @@ package com.att.tdp.bisbis10.model;
 import com.att.tdp.bisbis10.DTO.RestaurantDTO;
 import jakarta.persistence.*;
 
+import java.util.LinkedList;
 import java.util.List;
 @Entity
 @Table(name = "restaurants")
@@ -15,7 +16,13 @@ public class Restaurant {
     private boolean isKosher;
 
     @ElementCollection
-    private List<String> cuisines;
+    private List<String> cuisines = new LinkedList<>();
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Order> orders = new LinkedList<>();
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Dish> dishes = new LinkedList<>();
 
     public Restaurant() {}
     public Restaurant(RestaurantDTO restaurantDTO) {
@@ -25,7 +32,23 @@ public class Restaurant {
         this.cuisines = restaurantDTO.cuisines();
         this.averageRating = -1;
     }
+    public Order placeOrder(List<OrderItem> orderItems) {
+        Order order = new Order();
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        orders.add(order);
+        return order;
+    }
+    public void addDish(Dish dish) {
+        dishes.add(dish);
+        dish.setRestaurant(this);
+    }
 
+    public void removeDish(Dish dish) {
+        dishes.remove(dish);
+        dish.setRestaurant(null);
+    }
     public String getName() {
         return name;
     }
@@ -63,5 +86,9 @@ public class Restaurant {
 
     public void setAverageRating(float averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
     }
 }
